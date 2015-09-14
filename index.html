@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   
-  <title>相爱不是陪伴</title>
+  <title>L先生</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description">
 <meta property="og:type" content="website">
-<meta property="og:title" content="相爱不是陪伴">
+<meta property="og:title" content="L先生">
 <meta property="og:url" content="http://www.leo1029.com/index.html">
-<meta property="og:site_name" content="相爱不是陪伴">
+<meta property="og:site_name" content="L先生">
 <meta property="og:description">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="相爱不是陪伴">
+<meta name="twitter:title" content="L先生">
 <meta name="twitter:description">
   
-    <link rel="alternative" href="/atom.xml" title="相爱不是陪伴" type="application/atom+xml">
+    <link rel="alternative" href="/atom.xml" title="L先生" type="application/atom+xml">
   
   
     <link rel="icon" href="/favicon.png">
@@ -151,11 +151,11 @@
 </nav>
       <div class="body-wrap">
   
-    <article id="post-IE8自动切换成兼容模式" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-velocity动态属性解析" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2015/09/12/IE8自动切换成兼容模式/" class="article-date">
-  	<time datetime="2015-09-12T13:36:13.204Z" itemprop="datePublished">2015-09-12</time>
+      <a href="/2015/09/14/velocity动态属性解析/" class="article-date">
+  	<time datetime="2015-09-14T14:34:07.395Z" itemprop="datePublished">2015-09-14</time>
 </a>
     </div>
   
@@ -164,9 +164,95 @@
       <input type="hidden" class="isFancy" />
     
     
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/09/14/velocity动态属性解析/">velocity动态属性解析</a>
+    </h1>
+  
+
+      </header>
+      
+    
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="IE8自动开启兼容性视图">IE8自动开启兼容性视图</h1><p>有的时候在IE8下打开浏览器访问页面的时候会莫名其妙地跳转到IE8兼容性视图下。</p>
+        <p>我们的数据设计如下（且不论是否合理）</p>
+<ol>
+<li><p>company对象，存储公司相关信息，包含8个自定义字段，存储的字段名self1~self8</p>
+</li>
+<li><p>cols对象，是一个map，存储自定义的字段名</p>
+</li>
+</ol>
+<p>cols对象的数据结构如下</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">   "<span class="attribute">self1</span>": <span class="value">&#123;"<span class="attribute">columnName</span>":<span class="value"><span class="string">"自定义字段1"</span></span>&#125;，</span><br><span class="line">   <span class="string">"self2"</span>: &#123;"<span class="attribute">columnName</span>":<span class="value"><span class="string">"自定义字段2"</span></span>&#125;，</span><br><span class="line">   <span class="string">"self3"</span>: &#123;"<span class="attribute">columnName</span>":<span class="value"><span class="string">"自定义字段3"</span></span>&#125;，</span><br><span class="line">    ........</span><br><span class="line"></span>&#125;</span><br></pre></td></tr></table></figure>
+<p>需求：在页面上展示以表格的形式展示自定义字段信息</p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">&lt;table&gt;</span></span><br><span class="line">	<span class="variable">&lt;tr&gt;</span></span><br><span class="line">		<span class="variable">&lt;td&gt;</span>$!company.self1<span class="variable">&lt;/td&gt;</span></span><br><span class="line">		<span class="variable">&lt;td&gt;</span>$!cols.get(<span class="string">"self1"</span>).columnName<span class="variable">&lt;/td&gt;</span></span><br><span class="line">	<span class="variable">&lt;/tr&gt;</span></span><br><span class="line">	<span class="variable">&lt;tr&gt;</span></span><br><span class="line">		<span class="variable">&lt;td&gt;</span>$!company.self2<span class="variable">&lt;/td&gt;</span></span><br><span class="line">		<span class="variable">&lt;td&gt;</span>$!cols.get(<span class="string">"self2"</span>).columnName<span class="variable">&lt;/td&gt;</span></span><br><span class="line">	<span class="variable">&lt;/tr&gt;</span></span><br><span class="line">       ............</span><br><span class="line"><span class="variable">&lt;/table&gt;</span></span><br></pre></td></tr></table></figure>
+<p>上面的写法是比较直接的，可以完成这个功能，但是8个基本相同的结构，你是不是觉得可以用循环呢？所以我们来改一下</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;table&gt;</span><br><span class="line">	#<span class="function"><span class="title">foreach</span><span class="params">(<span class="variable">$i</span> in [<span class="number">1</span>..<span class="number">8</span>])</span></span></span><br><span class="line">	&lt;tr&gt;</span><br><span class="line">		&lt;td&gt;#<span class="function"><span class="title">evaluate</span><span class="params">(<span class="string">"$company.self$i"</span>)</span></span>&lt;/td&gt;</span><br><span class="line">		&lt;td&gt;#<span class="function"><span class="title">evaluate</span><span class="params">(<span class="string">'$!cols.get("self1").columnName'</span>)</span></span>&lt;/td&gt;</span><br><span class="line">	&lt;/tr&gt;</span><br><span class="line">	<span class="id">#end</span></span><br><span class="line">&lt;/table&gt;</span><br></pre></td></tr></table></figure>
+<p>由于属性名是不确定的，没有办法使用\$company.self\$i这种形式，所以我们可以使用evaluate来动态的解析属性值</p>
+<p>使用evaluate命令有几个注意方面</p>
+<ol>
+<li><p>代码#evaluate(“\$company.self\$i”) 第一个\$后面不能使用感叹号（静默模式），因为使用静默模式的时候它会先解析\$!company.self这一部分，发现这个部分是null，则使用静默模式处理成了空字符串，继续解析第二个$符号对应的变量，最后的结果是变成了1,2,3..这样的数据</p>
+</li>
+<li><p>代码#evaluate(“\$company.self\$i”)，必须使用双引号包含，不然会解析不成功，最后显示成\$company.self1,\$company.self2…</p>
+</li>
+<li><p>如果内部使用的是双引号，可以在外层使用单引号。例如#evaluate(‘\$!cols.get(“self1”).columnName’)，可以正常解析</p>
+</li>
+<li><p>如果\$company.self1不存在或者为null的时候，会显示成\$company.self1,\$company.self2…</p>
+</li>
+</ol>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
+    <article id="post-IE8自动切换成兼容模式" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/09/14/IE8自动切换成兼容模式/" class="article-date">
+  	<time datetime="2015-09-14T14:29:18.697Z" itemprop="datePublished">2015-09-14</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/09/14/IE8自动切换成兼容模式/">IE8自动开启兼容性视图</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>有的时候在IE8下打开浏览器访问页面的时候会莫名其妙地跳转到IE8兼容性视图下。</p>
 <p>我到目前为止遇到过两次这个事情，留个记录作为以后解决问题的参考。</p>
 <p><br></p>
 <p>场景：页面中有一个span（行内元素）嵌套了一个div（块级元素）</p>
