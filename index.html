@@ -151,6 +151,126 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-webpack_install" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/10/05/webpack_install/" class="article-date">
+  	<time datetime="2015-10-05T07:02:59.905Z" itemprop="datePublished">2015-10-05</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="webpack入门篇（三）：安装">webpack入门篇（三）：安装</h1><h2 id="node-js">node.js</h2><p>安装node.js</p>
+<p>node.js自带了包管理器npm</p>
+<h2 id="webpack">webpack</h2><p>webpack可以通过npm进行安装</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm <span class="operator"><span class="keyword">install</span> webpack -<span class="keyword">g</span></span></span><br></pre></td></tr></table></figure>
+<p>通过上面的命令可以全局地安装webpack，并且可以在命令行中使用webpack命令</p>
+<h2 id="在项目中使用webpack">在项目中使用webpack</h2><p>最好将webpack也作为项目中的依赖进行使用，这样就可以使用本地版本的webpack，不需要强制使用全局唯一的webpack了</p>
+<p>通过npm命令添加package.json配置文件</p>
+<figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">npm</span> init</span><br></pre></td></tr></table></figure>
+<p>如果你不想发布你的工程到npm中，你可以使用下面的方式安装并将webpack作为依赖添加到项目中</p>
+<figure class="highlight q"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install webpack --<span class="built_in">save</span>-<span class="built_in">dev</span></span><br></pre></td></tr></table></figure>
+<h2 id="版本">版本</h2><p>有两种webpack的可用版本。一种是稳定版本，一种是测试版本，测试版本在版本号中有-beta标志。beta版包含一些不确定的变更，实验性的特性和较少的测试。所以在使用webpack的时候尽量使用稳定版本</p>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$ </span>npm install webpack<span class="variable">@1</span>.<span class="number">2</span>.x --save-dev</span><br></pre></td></tr></table></figure>
+<h2 id="开发工具">开发工具</h2><p>如果你要使用开发工具，你应该安装下面的工具</p>
+<figure class="highlight q"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install webpack-<span class="built_in">dev</span>-server --<span class="built_in">save</span>-<span class="built_in">dev</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
+    <article id="post-webpack_whatIsWebpack" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/10/05/webpack_whatIsWebpack/" class="article-date">
+  	<time datetime="2015-10-05T07:00:46.304Z" itemprop="datePublished">2015-10-05</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/10/05/webpack_whatIsWebpack/">webpack入门篇（二）：WHAT IS WEBPACK</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>webpack是模块管理器(module bundler)</p>
+<p>webpack将具有依赖关系的模块生成对应的静态资源</p>
+<h2 id="为什么需要新的模块管理器">为什么需要新的模块管理器</h2><p>目前存在的模块管理器不能够很好地满足大的应用（大的单页面应用）。开发一个新的模块管理器的最主要原因是实现代码的拆分和静态资源应该通过模块化无缝地连接到一起。</p>
+<p>我尝试扩展现有的模块管理器，但是不能实现所有的目标。</p>
+<h3 id="目标">目标</h3><ol>
+<li>将依赖树拆分成块，按需加载</li>
+<li>减少初始化的时间</li>
+<li>每个静态资源都能够独立成为一个模块</li>
+<li>能够将第三方库作为模块整合在一起</li>
+<li>能够自定义模块管理器的几乎所有部分</li>
+<li>适合大的工程</li>
+</ol>
+<h2 id="webpack有什么不同">webpack有什么不同</h2><h3 id="代码的拆分">代码的拆分</h3><p>在webpack的依赖树中有两种依赖方式：同步和异步。异步依赖作为分割点，形成一个新的块。对块树进行优化之后，每一个块都生成一个文件。</p>
+<h3 id="加载器">加载器</h3><p>webpack只能够处理原生的javascript，但是加载器可以将其他资源转化成javascript。这样，每一个资源组成一个模块。</p>
+<h3 id="智能编译">智能编译</h3><p>webpack拥有智能编译器可以处理几乎所有的第三方库，在依赖中可以使用表达式，例如：<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">require</span><span class="params">(<span class="string">"./templates/"</span> + name + <span class="string">".jade"</span>)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>webpack能够处理最常用的模块处理风格，CommonJs和AMD</p>
+<h3 id="插件系统">插件系统</h3><p>webpack拥有功能丰富的插件系统，大多数的内部功能都基于插件系统。webpack允许根据自己的需要自定义插件并将共通的插件作为开发源码进行发布。</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
     <article id="post-webpack_motivation" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
